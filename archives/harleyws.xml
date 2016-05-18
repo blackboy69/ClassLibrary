@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  __  __          _ 
+ |  \/  | ___  __| |_   _ ___  __ _ 
+ | |\/| |/ _ \/ _` | | | / __|/ _` |
+ | |  | |  __/ (_| | |_| \__ \ (_| |
+ |_|  |_|\___|\__,_|\__,_|___/\__,_|
+
+ harleyws.xml - specifications for harleyws
+ October 2015 by Harley H. Puthuff
+ Copyright 2015, Your Showcase on the Internet
+-->
+<medusa>
+    <databoss>
+		<connections>
+			<connection
+				name="localhost"
+				host="localhost"
+				user="harley"
+				pass="developer"
+				/>
+			<connection
+				name="nexus"
+				host="db.yourshowcase.net"
+				user="harley"
+				pass="developer"
+				/>
+			<connection
+				name="webasket"
+				host="sfo.yourshowcase.net"
+				user="webasket"
+				pass="shoptillyoudrop"
+				/>
+		</connections>
+		<defaultConnection>nexus</defaultConnection>
+	</databoss>
+</medusa>
