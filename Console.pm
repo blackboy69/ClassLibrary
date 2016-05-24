@@ -6,13 +6,14 @@
 #  \____\___/|_| |_|___/\___/|_|\___|
 #
 # Console.pm - Console (STDOUT) handler
-# August 2015 by Harley H. Puthuff
-# Copyright 2015, Your Showcase on the Internet
+# May 2016 by Harley H. Puthuff
+# Copyright 2016, Your Showcase on the Internet
 #
 
 package Console;
 
-use File::Basename;
+use constant DEFAULT_PREFIX		=> '>';		# default line prefix
+use constant LABEL_SIZE			=> 20;		# max length of value label
 
 ##
 # Constructor:
@@ -20,14 +21,18 @@ use File::Basename;
 #	@param string $prefix		: (optional) prefix to output
 #	@return object
 #
-
 sub new {
 	my $class = shift;
 	my $this = {};
 	bless $this,$class;
 	$this->{prefix} = shift;	# get any prefix
-	$this->{prefix} ||= "=>";	# use default if none
+	$this->{prefix} ||= DEFAULT_PREFIX;	# use default if none
 	$this->{prefix} .= " ";		# append a space
+	$0 =~ /(.*\/)*([^.]+)(\..*)*/;	# extract
+	$this->{script} = $2;	#  our name
+	$this->{script} = "logStats" if ($this->{script} =~ /[0-9]+/);
+	$this->{bold} = `tput bold`; chomp($this->{bold});
+	$this->{normal} = `tput sgr0`; chomp($this->{normal});
 	return $this;
 	}
 
@@ -83,10 +88,8 @@ sub confirm {
 sub header {
 	my ($this,$title) = @_;
 	unless ($title) {
-		my $fullname = $0;
-		my $filename = basename($fullname);
 		my $ltime = localtime;
-		$title = sprintf("%s start: %s",$filename,$ltime);
+		$title = sprintf("%s start: %s",$this->{script},$ltime);
 		}
 	print STDOUT "\n";
 	$this->write($title,('-' x length($title)));
@@ -100,24 +103,32 @@ sub header {
 sub footer {
 	my ($this,$title) = @_;
 	unless ($title) {
-		my $fullname = $0;
-		my $filename = basename($fullname);
 		my $ltime = localtime;
-		$title = sprintf("%s ended: %s",$filename,$ltime);
+		$title = sprintf("%s ended: %s",$this->{script},$ltime);
 		}
 	$this->write(('-' x length($title)),$title);
 	print STDOUT "\n";
 	}
 
 ##
-# display a name,value pair
+# exhibit a label (& value)
 #
-#	@param string $name			: the name of the value
-#	@param mixed $value			: the value to show
+#	@param string $label			: label of the value
+#	@param mixed $value			: (optional) value to show
+#	Note to self: any $label value ending in ':' is always a subheading
 #
-sub show {
-	my ($this,$name,$value) = @_;
-	$this->write("$name: $value");
+sub exhibit {
+	my ($this,$label,$value) = @_;
+	my $trailer = (length($label) >= LABEL_SIZE) ? "" :	(' 'x(LABEL_SIZE-length($label)));
+	if (substr($label,-1) eq ':') { #subheading
+		$this->write($this->{bold}.$label.$this->{normal});
+		}
+	else { #label & value
+		$value =~ tr/\x20-\x7f//cd;	# only printable
+		$value =~ s/\s{2,}/ /g;		# strip multiple spaces
+		$value =~ s/\s+$//;			# strip trailing white space
+		$this->write(" ".$label.$trailer." ".$this->{bold}.$value.$this->{normal});
+		}
 	}
 
 -1;
