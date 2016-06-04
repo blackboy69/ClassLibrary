@@ -121,7 +121,10 @@ public function exhibit($label,$value=null) {
 		$value = preg_replace('/[^\x20-\x7E]/','', $value);
 		$value = preg_replace('/\s{2,}/',' ',$value);
 		$value = rtrim($value);
-		$this->write(" ".$label.$trailer." ".$this->bold.$value.$this->normal);
+		if (substr($value,0,1) == ' ')
+			$this->write(" ".$label.$trailer." ".$value);
+		else
+			$this->write(" ".$label.$trailer." ".$this->bold.$value.$this->normal);
 		}	
 	}	
 
