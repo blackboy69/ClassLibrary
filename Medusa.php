@@ -18,6 +18,7 @@ class Object extends stdClass {}		// generic class
 
 class Medusa {							// core Medusa class
 
+	public static $scriptPath;			// where original script lives
 	public static $libraryPath;			// where Medusa lives
 	public static $confFileName;		// name of the configuration .xml file
 	public static $configuration;		// loaded configuration values
@@ -55,15 +56,19 @@ public static function autoload($className) {
  * methods.
  */
 public function __construct() {
+	self::$scriptPath = getcwd();
 	self::$libraryPath = __DIR__;		// our home dir
-	if (file_exists("Medusa.xml")) {
-		self::$confFileName = "Medusa.xml";
+	$testname = self::$scriptPath . '/' . "Medusa.xml";
+	if (file_exists($testname)) {
+		self::$confFileName = $testname;
 		}
 	else {
 		$hostname = gethostname();
 		if (preg_match('/^(\S+)\.\S+\.\S+$/',$hostname,$parts)) $hostname = $parts[1];
-		self::$confFileName = self::$libraryPath . "/{$hostname}.xml";
-		if (! file_exists(self::$confFileName))
+		$testname = self::$libraryPath . "/{$hostname}.xml";
+		if (file_exists($testname))
+			self::$confFileName = $testname;
+		else
 			self::$confFileName = self::$libraryPath . "/Medusa.xml";
 		}
 	self::$configuration = simplexml_load_file(self::$confFileName);
