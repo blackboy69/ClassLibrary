@@ -32,11 +32,15 @@ class Medusa {							// core Medusa class
 public static function autoload($className) {
 	$path = self::$libraryPath;
 	$possibles = array(
-		// check the class library
+		// check the master class library
 		"{$path}/{$className}.php",
 		"{$path}/{$className}.class.php",
 		"{$path}/{$className}.inc",
-		// check local or include directory
+		// check for local class library
+		"classes/{$className}.php",
+		"classes/{$className}.class.php",
+		"classes/{$className}.inc",
+		// check local directory
 		"{$className}.php",
 		"{$className}.class.php",
 		"{$className}.inc"
