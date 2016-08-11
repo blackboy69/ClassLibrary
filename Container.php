@@ -28,7 +28,7 @@ abstract class Container {
  */
 public function __construct() {
 	$args = func_get_args();
-	if ($args[0] && is_object($args[0])) {
+	if ($args && $args[0] && is_object($args[0])) {
 		$this->db = $args[0];
 		array_shift($args);
 		}
